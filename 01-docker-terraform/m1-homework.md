@@ -26,15 +26,15 @@ What's the version of `pip` in the image?
 - 23.3.1
 
 
-Answer:  25.3
+# Answer:  25.3
 
 ```
-docker run -it python:3.13.11-slim
+r@g:~/dez$ docker run -it python:3.13-slim
 
 >>> import pip
 >>> pip.__version__
 '25.3'
-
+>>> exit
 ```
 
 ## Question 2. Understanding Docker networking and docker-compose
@@ -81,6 +81,11 @@ volumes:
 
 If multiple answers are correct, select any 
 
+# Answer db:5432  
+
+pgAdmin use hostname db (PostgreSQL), port 5432  port PostgreSQL.
+
+docker-compose up -d
 
 ## Prepare the Data
 
