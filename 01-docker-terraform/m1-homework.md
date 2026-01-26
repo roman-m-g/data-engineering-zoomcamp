@@ -110,6 +110,15 @@ For the trips in November 2025 (lpep_pickup_datetime between '2025-11-01' and '2
 - 8,254
 - 8,421
 
+# Answer 8,007
+
+```
+SELECT COUNT(*) 
+FROM green_taxi_trips
+WHERE trip_distance <= 1
+  AND lpep_pickup_datetime >= '2025-11-01' 
+  AND lpep_pickup_datetime < '2025-12-01';
+```
 
 ## Question 4. Longest trip for each day
 
@@ -122,6 +131,14 @@ Use the pick up time for your calculations.
 - 2025-11-23
 - 2025-11-25
 
+# Answer 2025-11-14
+
+```
+SELECT lpep_pickup_datetime AS pickup_day, trip_distance
+FROM green_taxi_trips
+WHERE trip_distance < 100
+ORDER BY trip_distance DESC
+```
 
 ## Question 5. Biggest pickup zone
 
@@ -132,6 +149,20 @@ Which was the pickup zone with the largest `total_amount` (sum of all trips) on 
 - Morningside Heights
 - Forest Hills
 
+# Answer East Harlem North
+```
+SELECT 
+    tz."Zone", 
+    SUM(gt.total_amount) AS total_sum
+FROM green_taxi_trips gt
+JOIN zones tz
+    ON gt."PULocationID" = tz."LocationID"
+WHERE CAST(lpep_pickup_datetime AS DATE) = '2025-11-18'
+GROUP BY tz."Zone"
+ORDER BY total_sum DESC
+LIMIT 1;
+
+```
 
 ## Question 6. Largest tip
 
@@ -143,6 +174,27 @@ Note: it's `tip` , not `trip`. We need the name of the zone, not the ID.
 - Yorkville West
 - East Harlem North
 - LaGuardia Airport
+
+# Answer Yorkville West
+
+
+```
+SELECT 
+    do_tz."Zone" AS dropoff_zone, 
+    MAX(gt.tip_amount) AS largest_tip
+FROM green_taxi_trips gt
+JOIN zones pu_tz
+    ON gt."PULocationID" = pu_tz."LocationID"
+JOIN zones do_tz
+    ON gt."DOLocationID" = do_tz."LocationID"
+WHERE 
+    pu_tz."Zone" = 'East Harlem North' 
+    AND gt.lpep_pickup_datetime >= '2025-11-01 00:00:00' 
+    AND gt.lpep_pickup_datetime < '2025-12-01 00:00:00'
+GROUP BY do_tz."Zone"
+ORDER BY largest_tip DESC
+LIMIT 1;
+```
 
 
 ## Terraform
@@ -169,6 +221,11 @@ Answers:
 - terraform init, terraform run -auto-approve, terraform destroy
 - terraform init, terraform apply -auto-approve, terraform destroy
 - terraform import, terraform apply -y, terraform rm
+
+
+# Answer terraform init, terraform apply -auto-approve, terraform destroy
+
+
 
 
 ## Submitting the solutions
